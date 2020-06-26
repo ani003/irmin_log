@@ -84,7 +84,7 @@ module Type (C : Irmin.CONTENT_ADDRESSABLE_STORE_MAKER) (K : Irmin.Hash.S) (V : 
 
   include Log_store(C)(K)(V)
   
-  let merge ~old v1 v2 = 
+  let merge ~old:_ v1 v2 = 
     let open Irmin.Merge in
     Store.create () >>= fun store ->
     Store.find store v1 >>= fun v1 ->
@@ -192,10 +192,10 @@ end = struct
     read_log cursor num_items []
 
   let read_all t ~path =
-    get_cursor t path >>= function
+    get_cursor t ~path >>= function
     | None -> Lwt.return []
     | Some cursor ->
-      read cursor max_int >>= fun (log, _) ->
+      read cursor ~num_items:max_int >>= fun (log, _) ->
       Lwt.return log
 
   let at_time {cache; _} =
