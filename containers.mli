@@ -33,6 +33,9 @@ module type S = sig
 
   val merge_into : t -> into:t -> unit Lwt.t
     (** Merges one branch into another *)
+    
+  val list_branches : repo -> branch list Lwt.t
+  	(** Returns list of all the branches in the repo *)
 
 end
 

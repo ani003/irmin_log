@@ -14,6 +14,7 @@ module type S = sig
   val of_branch : repo -> branch -> t Lwt.t
   val clone : src:t -> dst:branch -> t Lwt.t
   val merge_into : t -> into:t -> unit Lwt.t
+  val list_branches : repo -> branch list Lwt.t
   
 end
 
@@ -47,4 +48,6 @@ end = struct
     Store.merge_into ~info:(Irmin_unix.info "Merging") t ~into >>= function
     | Ok _ -> Lwt.return_unit
     | Error _ -> failwith "Merging conflict"
+    
+  let list_branches r = Store.Branch.list r
 end

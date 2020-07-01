@@ -63,12 +63,18 @@ let test_get_branch () =
   read_all fb ~path:["head"] >|= fun l ->
   List.iter (fun s -> Printf.printf "%s\n" s) l
 
+let print_branch () =
+  Printf.printf "\n(** printing branches **)\n";
+  init ~root:"/tmp/ezirmin" ~bare:false >>= fun r ->
+  list_branches r >|= fun l ->
+  List.iter (fun s -> Printf.printf "%s\n" s) l
 
 let _ = Lwt_main.run (
   test_append_read_all () >>=
   test_append_read_incr >>=
   test_branch_append_read_incr >>=
-  test_get_branch
+  test_get_branch >>=
+  print_branch
 )
 
 (*---------------------------------------------------------------------------
