@@ -30,7 +30,7 @@ let test_append_read () =
   List.iter (fun s -> Printf.printf "%s\n" s) l;
   Printf.printf "\n(** appending more **)\n";
   append_msgs m ["master.3"; "master.4"] >>= fun () ->
-  read_all m ~path:["head"] >>= fun l ->
+  read_all m ~path:["head"] >|= fun l ->
   List.iter (fun s -> Printf.printf "%s\n" s) l
 
 let test_branch_append_read () =
@@ -41,7 +41,7 @@ let test_branch_append_read () =
   append_msgs m ["master.5"; "master.6"] >>= fun () ->
   merge_into w ~into:m >>= fun () ->
   append_msgs m ["master.7"; "master.8"] >>= fun () ->
-  read_all m ~path:["head"] >>= fun l ->
+  read_all m ~path:["head"] >|= fun l ->
   List.iter (fun s -> Printf.printf "%s\n" s) l
 
 let test_get_branch () =
@@ -52,11 +52,17 @@ let test_get_branch () =
   read_all fb ~path:["head"] >|= fun l ->
   List.iter (fun s -> Printf.printf "%s\n" s) l
 
+let print_branch () = 
+  Printf.printf "\n(** get branch **)\n";
+  init ~root:"/tmp/ezirmin" ~bare:false >>= fun r ->
+  list_branches r >|= fun l ->
+  List.iter (fun s -> Printf.printf "%s\n" s) l
 
 let _ = Lwt_main.run (
   test_append_read () >>=
   test_branch_append_read >>=
-  test_get_branch
+  test_get_branch >>=
+  print_branch
 )
 
 (*---------------------------------------------------------------------------
